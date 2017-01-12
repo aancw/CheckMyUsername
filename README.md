@@ -29,7 +29,7 @@ Checking username for various service:
 - Instagram
 - Twitter
 - Medium
-- Steam( on progress )
+- Steam
 - etc
 
 ## Why I Made this?
@@ -37,8 +37,8 @@ Checking username for various service:
 I need username checker library for my tool, you can check at https://github.com/aancw/Belati.git
 
 ## Dependencies
-urllib2
-argparse
+- urllib2
+- argparse
 
 ## Author
 Aan Wahyu a.k.a Petruknisme(https://petruknisme.com)

@@ -21,13 +21,13 @@
 import urllib2
 import sys
 import argparse
+import re
 
 class CheckMyUsername(object):
 
     def check_response_code(self, service_url, username):
         url = service_url + username
         request = urllib2.Request(url, headers={'User-Agent' : "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:19.0) Gecko/20100101 Firefox/49.0"})
-        # yang sama itu github, twitter, instagram, bitbucket, facebook
         try:
             response = urllib2.urlopen(request)
         except urllib2.HTTPError as e:
@@ -54,14 +54,28 @@ class CheckMyUsername(object):
         return status_list
 
     def check_steam_user(self, username):
-        print("On Progress")
-        # steam private -> This profile is private.
-        # steam not found -> The specified profile could not be found.
+        url = "https://steamcommunity.com/id/" + username
+        request = urllib2.Request(url, headers={'User-Agent' : "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:19.0) Gecko/20100101 Firefox/49.0"})
+
+        steam_status = []
+        try:
+            response = urllib2.urlopen(request)
+            data = response.read()
+            if re.findall('This profile is private.', data):
+                steam_status = [username, 'Steam', 'private']
+            elif re.findall('The specified profile could not be found.', data):
+                steam_status = [username, 'Steam', 'notfound']
+            else:
+                steam_status = [username, 'Steam', 'exist']
+        except urllib2.HTTPError as e:
+            return (e.code, e.reason)
+
+        return steam_status
 
     def check_username_availability(self, username):
         username_status = []
         username_status = self.common_service_list(username)
-
+        username_status.append(self.check_steam_user(username))
         return username_status
 
 if __name__ == '__main__':
